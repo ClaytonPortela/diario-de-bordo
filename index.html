@@ -641,6 +641,29 @@ function renderMetas(){
   const proj = projecaoAteFim();
   const avg = averages();
 
+  let combustivelRows = '';
+  let totalLitrosSemana = 0;
+  let totalCustoSemana = 0;
+  for (let i=0;i<7;i++){
+    const d = new Date(monday); d.setDate(monday.getDate()+i);
+    const dow = d.getDay();
+    const horas = settings.schedule[dow] || 0;
+    const kmEstimadoDia = horas * avg.kmPorHora;
+    const litrosDia = settings.consumo>0 ? kmEstimadoDia / settings.consumo : 0;
+    const custoDia = kmEstimadoDia * custoPorKm();
+    totalLitrosSemana += litrosDia;
+    totalCustoSemana += custoDia;
+    combustivelRows += `
+      <tr class="${dow===todayDow?'today':''}">
+        <td class="day-name">${DAY_SHORT[dow]}</td>
+        <td>${horas}h</td>
+        <td>${kmEstimadoDia.toFixed(0)} km</td>
+        <td>${litrosDia.toFixed(1)} l</td>
+        <td>${fmtBRL(custoDia)}</td>
+      </tr>
+    `;
+  }
+
   const html = `
     <div class="panel">
       <h2>Meta da semana por dia</h2>
@@ -659,6 +682,19 @@ function renderMetas(){
         <div class="metric"><div class="lbl">Km / hora</div><div class="val">${avg.kmPorHora.toFixed(2)}</div></div>
         <div class="metric"><div class="lbl">Ganho / corrida</div><div class="val">${fmtBRL(avg.ganhoCorrida)}</div></div>
       </div>
+    </div>
+
+    <div class="panel">
+      <h2>Combustível para a semana</h2>
+      <table class="goal-table">
+        <thead><tr><th>Dia</th><th>Horas</th><th>Km estimado</th><th>Litros</th><th>Valor a reservar (R$)</th></tr></thead>
+        <tbody>${combustivelRows}</tbody>
+      </table>
+      <div class="metric-grid">
+        <div class="metric"><div class="lbl">Litros na semana</div><div class="val">${totalLitrosSemana.toFixed(1)} l</div></div>
+        <div class="metric"><div class="lbl">Gasto estimado na semana</div><div class="val">${fmtBRL(totalCustoSemana)}</div></div>
+      </div>
+      <div class="note-box">Não precisa abastecer todo dia com esse valor exato — dá pra fazer abastecimentos maiores a cada 3-4 dias, somando os valores dos dias. O ideal é comparar os litros realmente abastecidos com o km rodado no período pra calibrar se o consumo real do carro está batendo com os ${settings.consumo} km/l cadastrados.</div>
     </div>
 
     <div class="panel">
