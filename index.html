@@ -123,7 +123,7 @@
 
 <div id="auth-gate" style="display:none;">
   <h1>Diário de Bordo</h1>
-  <p class="sub">Controle Uber • Fortaleza-CE - teste</p>
+  <p class="sub">Controle Uber • Fortaleza-CE</p>
   <form id="auth-form">
     <div class="field">
       <label>E-mail</label>
@@ -145,7 +145,7 @@
 <div id="app" style="display:none;">
   <header class="top">
     <h1>Diário de Bordo</h1>
-    <p>Controle Uber • Fortaleza-CE - teste</p>
+    <p>Controle Uber • Fortaleza-CE</p>
   </header>
   <div class="top-account">
     <span style="font-size:12px;color:var(--muted);" id="account-email"></span>
@@ -383,7 +383,7 @@ function weekBounds(dateObj){
   const sunday = new Date(monday); sunday.setDate(monday.getDate()+6); sunday.setHours(23,59,59,999);
   return {monday, sunday};
 }
-function isoDate(d){ return d.toISOString().slice(0,10); }
+function isoDate(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 
 function sessionsInRange(startIso, endIso){
   return sessions.filter(s => s.date >= startIso && s.date <= endIso);
